@@ -74,7 +74,8 @@ docker images
 ```
 
 In my case, the image was created:
-![image](..\figures\Docker\docker_build_result.png)
+<!-- ![image](..\figures\Docker\docker_build_result.png) -->
+ ![image](../figures/Docker/docker_build_result.png)
 
 ## 3. Publish Docker image to registry
 
