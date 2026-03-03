@@ -2,7 +2,8 @@
 
 ## 1. Setup Docker
 This is a script I use for installing Docker:
-```# Add Docker's official GPG key:
+```
+# Add Docker's official GPG key:
 sudo apt-get update
 sudo apt-get install ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
@@ -30,7 +31,8 @@ newgrp docker
 Here, I will use a sample of an ASPNET web app I found publishing on Github
 
 ### 2.2. Prepare Docker file
-```FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+```
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG TARGETARCH
 WORKDIR /source
 
