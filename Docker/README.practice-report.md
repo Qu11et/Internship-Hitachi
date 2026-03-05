@@ -2,7 +2,8 @@
 
 ## 1. Setup Docker
 This is a script I use for installing Docker:
-```# Add Docker's official GPG key:
+```
+# Add Docker's official GPG key:
 sudo apt-get update
 sudo apt-get install ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
@@ -30,7 +31,8 @@ newgrp docker
 Here, I will use a sample of an ASPNET web app I found publishing on Github
 
 ### 2.2. Prepare Docker file
-```FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+```
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG TARGETARCH
 WORKDIR /source
 
@@ -74,7 +76,8 @@ docker images
 ```
 
 In my case, the image was created:
-![image](..\figures\Docker\docker_build_result.png)
+<!-- ![image](..\figures\Docker\docker_build_result.png) -->
+ ![image](../figures/Docker/docker_build_result.png)
 
 ## 3. Publish Docker image to registry
 
@@ -127,7 +130,7 @@ docker push aws_account_id.dkr.ecr.region.amazonaws.com/aspnetapp-hitachi-digita
 ```
 
 - My result after push to Dockerhub:
-![image](..\figures\Docker\docker_push_result.png)
+![image](../figures/Docker/docker_push_result.png)
 
 ## 4. Run a container from an image on registry
 - If using a private registry, we will need to do the login step like above, but if with the public registry like Dockerhub, login in is not nesscessary.
@@ -150,4 +153,4 @@ docker run --rm -it -p 8000:8080 -e ASPNETCORE_HTTP_PORTS=8080 qu1et/aspnetapp-h
 ```
 
 - The result:
-![image](..\figures\Docker\docker_run_result.png)
+![image](../figures/Docker/docker_run_result.png)
