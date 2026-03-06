@@ -3,7 +3,7 @@
 ## 1. Basic structure of a K8s cluster
 A kubernetes cluster consist of two main components: The Control Plane and The Worker Node. See the figure below:
 
-![image](../figures/K8s/k8s_structure.png)
+![image](./figures/k8s_structure.png)
 
 - Control Plane (Master Node): Acts as the "brain" managing the entire cluster, including:
     - kube-apiserver: The main communication gateway of the K8s cluster.
@@ -22,4 +22,6 @@ A kubernetes cluster consist of two main components: The Control Plane and The W
 - Service: Defines a stable IP address for accessing the group of Pods (as Pods can be continuously deleted and recreated with changing IP addresses).
 - Deployment: Manages application updates, allows increasing/decreasing the number of Pods, and supports self-healing mechanisms.
 - Ingress: Manages external access to services within the cluster (usually via HTTP/HTTPS).
+
+*to be continue...*
 

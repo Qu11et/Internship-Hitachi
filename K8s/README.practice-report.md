@@ -11,7 +11,7 @@ minikube start
 ```
 
 - Result:
-![image](../figures/K8s/minikube_start_result.png)
+![image](./figures/minikube_start_result.png)
 
 ## 3. Install kubectl
 According to the instruction on kubernetes documentation page:
@@ -45,7 +45,7 @@ I followed the steps:
 minikube start
 ```
 
-- Check the status ò the minikube cluster:
+- Check the status of the minikube cluster:
 Verify the status of the minikube cluster to ensure all the components are in a running state.
 ```
 minikube status
@@ -71,6 +71,7 @@ Now, you can use this URL and switch back to the terminal where you ran minikube
 
 - Create a Deployment
 According to kubernetes documentation:
+
 *A Kubernetes Pod is a group of one or more Containers, tied together for the purposes of administration and networking. The Pod in this tutorial has only one Container. A Kubernetes Deployment checks on the health of your Pod and restarts the Pod's Container if it terminates. Deployments are the recommended way to manage the creation and scaling of Pods.*
 
 1. Use the *kubectl create* command to create a Deployment that manages a Pod. The Pod runs a Container based on the provided Docker image.
@@ -85,6 +86,7 @@ kubectl set env deployment/lab-minikube ASPNETCORE_HTTP_PORTS=8080
 ```
 
 3. Forward port in order to access
+
 *In Docker, the computer and the container are directly connected. In K8s, the container is in a Pod, and the Pod is in a Minikube virtual node. To map the physical machine's port 8000 to the Pod's port 8080, let's run this command in a new terminal:*
 ```
 kubectl port-forward deployment/lab-minikube 8000:8080
@@ -96,7 +98,8 @@ kubectl get deployments
 ```
 
 The output:
-![image](../figures/K8s/kubectl_get_deployments.png)
+![image](./figures/kubectl_get_deployments.png)
+
 *(It may take some time for the pod to become available. If you see "0/1", try again in a few seconds.)*
 
 5. View the Pod:
@@ -105,7 +108,8 @@ kubectl get pods
 ```
 
 The output:
-![image](../figures/K8s/kubectl_get_pods.png)
+
+![image](./figures/kubectl_get_pods.png)
 
 6. Debugging:
 - To view cluster events:
@@ -125,10 +129,12 @@ kubectl logs some-things-123456abcd-efgh
 
 5. The result:
 The app is deployed successfully:
-![image](../figures/K8s/minikube_deploy.png)
+
+![image](./figures/minikube_deploy.png)
 
 And you can see the related information on dashboard like Workload, Service, Config and Storage, Cluster,...
-![image](../figures/K8s/minikube_dashboard.png)
+
+![image](./figures/minikube_dashboard.png)
 
 
 ## 5. Hand-on with K8s CLI
@@ -176,4 +182,5 @@ kubectl logs <pod-name> # View container logs
 ```
 ## References:
 https://minikube.sigs.k8s.io/docs/start/
+
 https://kubernetes.io/docs/tutorials/hello-minikube/

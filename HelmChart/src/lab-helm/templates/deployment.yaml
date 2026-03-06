@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deploy
+  labels:
+    app: my-aspnet
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: my-aspnet
+  template:
+    metadata:
+      labels:
+        app: my-aspnet
+    spec:
+      containers:
+        - name: aspnet-container
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: ASPNETCORE_HTTP_PORTS
+              value: {{ .Values.service.port | quote }}
