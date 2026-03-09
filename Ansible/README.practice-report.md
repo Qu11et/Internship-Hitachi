@@ -116,7 +116,8 @@ In the *deploy-aspnet.yaml* file, I added the following content to define the An
 
 4. Run the Ansible playbook:
 To run the Ansible playbook, use the following command in your WSL terminal:
-```ansible-playbook -i inventory.ini deploy-aspnet.yaml
+```
+ansible-playbook -i inventory.ini deploy-aspnet.yaml
 ```
 
 This command will execute the playbook, which will connect to the Kubernetes cluster and deploy the Helm chart defined in the playbook. You should see output in the terminal indicating the progress of the deployment.
@@ -127,7 +128,8 @@ Result:
 
 5. Verify the deployment:
 After the playbook has finished running, you can verify that the application has been deployed successfully by checking the status of the pods in your Kubernetes cluster. You can use the following command:
-```kubectl get pods
+```
+kubectl get pods
 ```
 
 You should see a pod running with the name corresponding to your Helm release (e.g., `my-aspnet-release-deploy-xxxxxx`).

@@ -50,8 +50,12 @@ handlers, files, templates, and variables.
 
 ### Example Playbook
 
+... still updating ...
+
 ### Ansible Galaxy
 Ansible Galaxy is a hub for sharing Ansible roles and collections. You can find pre-built roles for common tasks, such as installing and configuring software, and you can also share your own roles with the community.
+
+to be continued ...
 
 ## References:
 - [Ansible Documentation](https://docs.ansible.com/)
