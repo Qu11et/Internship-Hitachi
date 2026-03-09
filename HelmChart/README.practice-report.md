@@ -99,9 +99,9 @@ service:
 
     - Check the result:
 
-[!image](./figures/helm_install_result.png)
+![image](./figures/helm_install_result.png)
 
-[!image](./figures/app_deployed_with_helm.png)
+![image](./figures/app_deployed_with_helm.png)
 
 
 
