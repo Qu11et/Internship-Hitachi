@@ -126,9 +126,9 @@ pipeline {
 
 ## The final result:
 
-![image](./Jenkins/figures/jenkins-result-1.png)
-![image](./Jenkins/figures/jenkins-result-2.png)
+![image](./figures/jenkins-result-1.png)
+![image](./figures/jenkins-result-2.png)
 
 As you can see, the pipeline executed successfully, and the ASP.NET application was deployed to Minikube with Ansible. We can verify this by accessing the application through the Minikube IP address and the NodePort assigned to the service.
 
-![image](./Jenkins/figures/access-successfully.png)
+![image](./figures/access-successfully.png)
