@@ -21,6 +21,7 @@
 4. Install Python and pip: Ansible requires Python to run. You can install Python and pip using the following commands:
    ```
    sudo apt install python3 python3-pip
+   sudo apt install python3.10-venv
    ```
 
 5. Create virtual environment (optional but recommended): It is a good practice to use a virtual environment for your Ansible projects to manage dependencies. You can create a virtual environment using the following commands:
@@ -83,7 +84,8 @@ ansible-lab/
 
 2. Create inventory file:
 In the *inventory.ini* file, I added the following content to specify that Ansible should run the playbook on the localhost (WSL):
-```[local]
+```
+[local]
 localhost ansible_connection=local ansible_python_interpreter=/home/<user_linux>/ansible-env/bin/python3
 ```
 

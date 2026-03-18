@@ -83,6 +83,10 @@ sudo apt update && sudo apt install openjdk-21-jdk -y
 ### Reprequisites
 Make sure that the following informations are configured in Jenkins Credential:
 - SSH credentials for the WSL agent node.
+- Install JVM in WSL to run the Jenkins agent. You can do this with:
+```bash
+sudo apt update && sudo apt install openjdk-21-jdk -y
+```
 
 ### Create a Jenkins pipeline
 1. Create a Jenkinsfile in the root of your project with the following content:
