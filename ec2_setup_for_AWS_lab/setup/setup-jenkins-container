@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# Dừng script ngay lập tức nếu có bất kỳ lệnh nào bị lỗi
+set -e
+
+echo "========================================================"
+echo "Bắt đầu thiết lập Jenkins với Docker-in-Docker (DinD)"
+echo "========================================================"
+
+# ---------------------------------------------------------
+# Bước 1: Tạo mạng lưới Bridge cho Jenkins
+# ---------------------------------------------------------
+echo ">>> [1/5] Đang tạo Docker network 'jenkins'..."
+# Kiểm tra xem network đã tồn tại chưa, nếu chưa thì tạo mới
+docker network ls | grep -q "jenkins" || docker network create jenkins
+
+# ---------------------------------------------------------
+# Bước 2: Chạy container Docker-in-Docker (dind)
+# ---------------------------------------------------------
+echo ">>> [2/5] Đang khởi chạy container 'docker:dind'..."
+docker run --name jenkins-docker --rm --detach \
+  --privileged --network jenkins --network-alias docker \
+  --env DOCKER_TLS_CERTDIR=/certs \
+  --volume jenkins-docker-certs:/certs/client \
+  --volume jenkins-data:/var/jenkins_home \
+  --publish 2376:2376 \
+  docker:dind --storage-driver overlay2
+
+# ---------------------------------------------------------
+# Bước 3: Tạo Dockerfile tùy chỉnh cho Jenkins
+# ---------------------------------------------------------
+echo ">>> [3/5] Đang tạo file Dockerfile..."
+cat << 'EOF' > Dockerfile
+FROM jenkins/jenkins:2.541.2-jdk21
+USER root
+RUN apt-get update && apt-get install -y lsb-release ca-certificates curl && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
+    chmod a+r /etc/apt/keyrings/docker.asc && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+    https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+    | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update && apt-get install -y docker-ce-cli && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+USER jenkins
+RUN jenkins-plugin-cli --plugins "blueocean docker-workflow json-path-api"
+EOF
+
+# ---------------------------------------------------------
+# Bước 4: Build Image Jenkins tùy chỉnh
+# ---------------------------------------------------------
+echo ">>> [4/5] Đang build Docker image 'myjenkins-blueocean:2.541.2-1'..."
+docker build -t myjenkins-blueocean:2.541.2-1 .
+
+# ---------------------------------------------------------
+# Bước 5: Chạy container Jenkins Controller
+# ---------------------------------------------------------
+echo ">>> [5/5] Đang khởi chạy Jenkins Controller..."
+docker run --name jenkins-blueocean --restart=on-failure --detach \
+  --network jenkins --env DOCKER_HOST=tcp://docker:2376 \
+  --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 \
+  --publish 8080:8080 --publish 50000:50000 \
+  --volume jenkins-data:/var/jenkins_home \
+  --volume jenkins-docker-certs:/certs/client:ro \
+  myjenkins-blueocean:2.541.2-1
+
+echo "========================================================"
+echo "✅ Thiết lập hoàn tất!"
+echo "========================================================"
+echo "Bạn có thể truy cập Jenkins tại: http://localhost:8080"
+echo ""
+echo "⏳ Đang lấy mật khẩu Admin khởi tạo cho bạn..."
+sleep 15 # Đợi một chút để Jenkins khởi động và sinh ra file mật khẩu
+docker exec jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword || echo "Vui lòng đợi thêm vài giây và chạy lệnh: docker exec jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword"

@@ -1,0 +1,22 @@
+pipeline {
+    agent { label 'eks-deployer' }
+
+    stages {
+        stage('Stage 1: Deploy to Minikube') {
+            steps {
+                dir('/home/ubuntu/ansible') { 
+                    sh "ansible-playbook -i inventory.ini deploy-aspnet.yaml"
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Quy trình CI/CD hoàn tất thành công."
+        }
+        failure {
+            echo "Có lỗi xảy ra. Hãy kiểm tra lại Log."
+        }
+    }
+}

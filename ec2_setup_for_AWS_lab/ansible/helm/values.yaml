@@ -1,0 +1,9 @@
+replicaCount: 2
+
+image:
+  repository: qu1et/aspnetapp-hitachi-digital
+  tag: v1
+
+service:
+  type: NodePort
+  port: 8080

@@ -1,0 +1,22 @@
+- name: Triển khai ứng dụng ASP.NET lên Minikube bằng Helm
+  hosts: local
+  tasks:
+    - name: Kiểm tra kết nối tới cụm Kubernetes
+      kubernetes.core.k8s_info:
+        kind: Node
+      register: node_info
+
+    - name: Hiển thị trạng thái cụm
+      debug:
+        msg: "Đang triển khai lên cụm: {{ node_info.resources[0].metadata.name }}"
+
+    - name: Thực thi Helm Chart
+      kubernetes.core.helm:
+        name: my-aspnet-release             # Tên của bản release
+        chart_ref: ./helm               # Đường dẫn tới thư mục Chart
+        release_namespace: default      # Namespace muốn cài đặt
+        values:                         # Ghi đè các thông số trong values.yaml (nếu cần)
+          replicaCount: 1
+          image:
+            tag: "v1"
+        wait: yes                       # Đợi cho đến khi các Pod ở trạng thái Ready
