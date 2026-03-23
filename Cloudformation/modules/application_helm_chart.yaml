@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: AWS CloudFormation Sample Template EKS Cluster on EC2
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Parameters
+        Parameters:
+
+Parameters:
+
+Mappings:
+  ServicePrincipalPartitionMap:
+    aws:
+      EC2: ec2.amazonaws.com
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+    aws-cn:
+      EC2: ec2.amazonaws.com.cn
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+    aws-us-gov:
+      EC2: ec2.amazonaws.com
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+
+Resources:
+  HelmChartApplication:
+    Type: "AWSQS::Kubernetes::Helm"
+    Properties:
+      ClusterID: !Ref EKSClusterName
+      KubeConfigKmsContext: !Ref KubeConfigKmsContext
+      Namespace: !Ref Namespace
+      Chart: stable/wordpress
+      Name: !Ref Name
+      Values:
+        wordpressUsername: !Ref wordpressUsername
+        wordpressPassword: !Ref wordpressPassword      

@@ -1,0 +1,137 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: AWS CloudFormation Sample Template EKS Cluster on EC2
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Parameters
+        Parameters:
+          - VPCId
+          - NATGateway1Id
+          - NATGateway2Id
+          - PrivateCidrBlock1
+          - PrivateCidrBlock2
+
+Parameters:
+  VPCId:
+    Type: String
+
+  NATGateway1Id:
+    Type: String
+
+  NATGateway2Id:
+    Type: String
+
+  PrivateCidrBlock1:
+    Type: String
+    Default: 10.0.4.0/24
+
+  PrivateCidrBlock2:
+    Type: String
+    Default: 10.0.5.0/24
+
+Mappings:
+  ServicePrincipalPartitionMap:
+    aws:
+      EC2: ec2.amazonaws.com
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+    aws-cn:
+      EC2: ec2.amazonaws.com.cn
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+    aws-us-gov:
+      EC2: ec2.amazonaws.com
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+
+Resources:
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPCId
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs
+          Ref: AWS::Region
+      CidrBlock: !Ref PrivateCidrBlock1
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-private-subnet1
+
+  PrivateRouteTable1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPCId
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-private-route-table1
+
+  PrivateRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable1
+      SubnetId: !Ref PrivateSubnet1
+
+  PrivateRoute1:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable1
+      NatGatewayId: !Ref NATGateway1Id
+      DestinationCidrBlock: 0.0.0.0/0
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPCId
+      AvailabilityZone: !Select
+        - 1
+        - !GetAZs
+          Ref: AWS::Region
+      CidrBlock: !Ref PrivateCidrBlock2
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-private-subnet2
+
+  PrivateRouteTable2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPCId
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-private-route-table2
+
+  PrivateRouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable2
+      SubnetId: !Ref PrivateSubnet2
+
+  PrivateRoute2:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable2
+      NatGatewayId: !Ref NATGateway2Id
+      DestinationCidrBlock: 0.0.0.0/0
+
+Outputs:
+  PrivateSubnet1Id:
+    Description: The ID of the first private subnet
+    Value: !Ref PrivateSubnet1
+
+  PrivateSubnet2Id:
+    Description: The ID of the second private subnet
+    Value: !Ref PrivateSubnet2
+
+  PrivateRouteTable1Id:
+    Description: The ID of the first private route table
+    Value: !Ref PrivateRouteTable1
+
+  PrivateRouteTable2Id:
+    Description: The ID of the second private route table
+    Value: !Ref PrivateRouteTable2      
+

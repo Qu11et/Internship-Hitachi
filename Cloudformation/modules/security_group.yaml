@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: 
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Parameters
+        Parameters:
+          - VPCId
+
+Parameters:
+  VPCId:
+    Type: String
+
+Mappings:
+  ServicePrincipalPartitionMap:
+    aws:
+      EC2: ec2.amazonaws.com
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+    aws-cn:
+      EC2: ec2.amazonaws.com.cn
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+    aws-us-gov:
+      EC2: ec2.amazonaws.com
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+
+Resources:
+  ControlPlaneSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Communication between the control plane and worker nodegroups
+      VpcId: !Ref VPCId
+      GroupName: !Sub ${AWS::StackName}-eks-control-plane-sg
+
+  ControlPlaneSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref ControlPlaneSecurityGroup
+      IpProtocol: "-1"
+      SourceSecurityGroupId: !GetAtt ControlPlaneSecurityGroup.GroupId
+      SourceSecurityGroupOwnerId: !Ref AWS::AccountId     
+
+Outputs:
+  ControlPlaneSecurityGroupId:
+    Description: The ID of the Control Plane Security Group
+    Value: !Ref ControlPlaneSecurityGroup
+           

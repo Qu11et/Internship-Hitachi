@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: AWS CloudFormation Sample Template EKS Cluster on EC2
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Parameters
+        Parameters:
+          - ControlPlaneSecurityGroupId
+          - PublicSubnet1Id
+          - PublicSubnet2Id
+          - PrivateSubnet1Id
+          - PrivateSubnet2Id
+          - EKSClusterVersion
+
+Parameters:
+  ControlPlaneSecurityGroupId:
+    Type: String
+
+  PublicSubnet1Id:
+    Type: String
+
+  PublicSubnet2Id:
+    Type: String
+
+  PrivateSubnet1Id:
+    Type: String
+
+  PrivateSubnet2Id:
+    Type: String
+
+  EKSClusterVersion:
+    Type: String
+    Default: "1.32"
+
+Mappings:
+  ServicePrincipalPartitionMap:
+    aws:
+      EC2: ec2.amazonaws.com
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+    aws-cn:
+      EC2: ec2.amazonaws.com.cn
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+    aws-us-gov:
+      EC2: ec2.amazonaws.com
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+
+Resources:
+  ControlPlane:
+    Type: AWS::EKS::Cluster
+    Properties:
+      Name: !Sub ${AWS::StackName}-cluster
+      ResourcesVpcConfig:
+        SecurityGroupIds:
+          - !Ref ControlPlaneSecurityGroupId
+        SubnetIds:
+          - !Ref PublicSubnet1Id
+          - !Ref PublicSubnet2Id
+          - !Ref PrivateSubnet1Id
+          - !Ref PrivateSubnet2Id
+      RoleArn: arn:aws:iam::632713546846:role/LabRole
+      Version: !Ref EKSClusterVersion
+
+Outputs:
+  EKSClusterName:
+    Description: The name of the EKS Cluster
+    Value: !Ref ControlPlane      

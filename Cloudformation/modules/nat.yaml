@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: 
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Parameters
+        Parameters:
+          - PublicSubnet1Id
+          - PublicSubnet2Id
+
+Parameters:
+  PublicSubnet1Id:
+    Type: String
+
+  PublicSubnet2Id:
+    Type: String
+
+Mappings:
+  ServicePrincipalPartitionMap:
+    aws:
+      EC2: ec2.amazonaws.com
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+    aws-cn:
+      EC2: ec2.amazonaws.com.cn
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+    aws-us-gov:
+      EC2: ec2.amazonaws.com
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+
+Resources:
+  EIP1:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  NATGateway1:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt EIP1.AllocationId
+      SubnetId: !Ref PublicSubnet1Id
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-nat-gw1
+
+  EIP2:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  NATGateway2:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt EIP2.AllocationId
+      SubnetId: !Ref PublicSubnet2Id
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-nat-gw2
+
+Outputs:
+  NATGateway1Id:
+    Description: The ID of the first NAT Gateway
+    Value: !Ref NATGateway1
+
+  NATGateway2Id:
+    Description: The ID of the second NAT Gateway
+    Value: !Ref NATGateway2           
+

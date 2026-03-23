@@ -1,0 +1,121 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: 
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Parameters
+        Parameters:
+          - ControlPlaneSecurityGroupId
+          - EKSClusterName
+          - PrivateSubnet1Id
+          - PrivateSubnet2Id
+          - NodeGroupInstanceTypes
+
+Parameters:
+  ControlPlaneSecurityGroupId:
+    Type: String
+
+  EKSClusterName:
+    Type: String
+
+  PrivateSubnet1Id:
+    Type: String  
+
+  PrivateSubnet2Id:
+    Type: String  
+
+  NodeGroupInstanceTypes:
+    Type: String
+    Default: t3.small
+
+Mappings:
+  ServicePrincipalPartitionMap:
+    aws:
+      EC2: ec2.amazonaws.com
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+    aws-cn:
+      EC2: ec2.amazonaws.com.cn
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+    aws-us-gov:
+      EC2: ec2.amazonaws.com
+      EKS: eks.amazonaws.com
+      EKSFargatePods: eks-fargate-pods.amazonaws.com
+
+Resources:
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        BlockDeviceMappings:
+          - DeviceName: /dev/xvda
+            Ebs:
+              Iops: 3000
+              Throughput: 125
+              VolumeSize: 80
+              VolumeType: gp3
+        MetadataOptions:
+          HttpPutResponseHopLimit: 2
+          HttpTokens: optional
+        SecurityGroupIds:
+          - !Ref ControlPlaneSecurityGroupId
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: Name
+                Value: !Sub ekshandson-ng-${AWS::StackName}-Node
+              - Key: alpha.eksctl.io/nodegroup-name
+                Value: !Sub ng-${AWS::StackName}
+              - Key: alpha.eksctl.io/nodegroup-type
+                Value: managed
+          - ResourceType: volume
+            Tags:
+              - Key: Name
+                Value: !Sub ekshandson-ng-${AWS::StackName}-Node
+              - Key: alpha.eksctl.io/nodegroup-name
+                Value: !Sub ng-${AWS::StackName}
+              - Key: alpha.eksctl.io/nodegroup-type
+                Value: managed
+          - ResourceType: network-interface
+            Tags:
+              - Key: Name
+                Value: !Sub ekshandson-ng-${AWS::StackName}-Node
+              - Key: alpha.eksctl.io/nodegroup-name
+                Value: !Sub ng-${AWS::StackName}
+              - Key: alpha.eksctl.io/nodegroup-type
+                Value: managed
+      LaunchTemplateName: !Sub ${AWS::StackName}-LaunchTemplate
+
+  ManagedNodeGroup:
+    Type: AWS::EKS::Nodegroup
+    Properties:
+      AmiType: AL2_x86_64
+      ClusterName: !Ref EKSClusterName
+      InstanceTypes:
+        - !Ref NodeGroupInstanceTypes
+      Labels:
+        alpha.eksctl.io/cluster-name: !Ref EKSClusterName
+        alpha.eksctl.io/nodegroup-name: !Sub ng-${AWS::StackName}
+      LaunchTemplate:
+        Id: !Ref LaunchTemplate
+      NodeRole: arn:aws:iam::632713546846:role/LabRole
+      NodegroupName: !Sub ng-${AWS::StackName}
+      ScalingConfig:
+        DesiredSize: 1
+        MaxSize: 2
+        MinSize: 1
+      Subnets:
+        - !Ref PrivateSubnet1Id
+        - !Ref PrivateSubnet2Id
+      Tags:
+        alpha.eksctl.io/nodegroup-name: !Sub ng-${AWS::StackName}
+        alpha.eksctl.io/nodegroup-type: managed
+  
+Outputs:
+  NodeGroupName:
+    Description: The name of the EKS Node Group
+    Value: !Ref ManagedNodeGroup
