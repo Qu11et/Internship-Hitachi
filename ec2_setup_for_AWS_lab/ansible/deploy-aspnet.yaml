@@ -12,11 +12,11 @@
 
     - name: Thực thi Helm Chart
       kubernetes.core.helm:
-        name: my-aspnet-release             # Tên của bản release
-        chart_ref: ./helm               # Đường dẫn tới thư mục Chart
-        release_namespace: default      # Namespace muốn cài đặt
-        values:                         # Ghi đè các thông số trong values.yaml (nếu cần)
+        name: my-aspnet-release        
+        chart_ref: ./helm              
+        release_namespace: default      
+        values:                         
           replicaCount: 1
           image:
             tag: "v1"
-        wait: yes                       # Đợi cho đến khi các Pod ở trạng thái Ready
+        wait: yes                       

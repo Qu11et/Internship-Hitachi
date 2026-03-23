@@ -45,9 +45,9 @@ To allow the Jenkins Controller to execute deployment commands on the Host Agent
     * Provide the Host IP, select the created SSH credential, and set the **Host Key Verification Strategy** to **Non verifying Verification Strategy** to prevent interactive prompt blocks.
 
 ### Step 3: Ansible & Helm Configuration
-Ansible acts as the bridge that triggers Helm to deploy the application to EKS. We encountered and resolved two critical configuration issues here.
+Ansible acts as the bridge that triggers Helm to deploy the application to EKS. I encountered and resolved two critical configuration issues here.
 
-1.  **Ansible Version Upgrade:** The default Ansible version (2.10.8) on older Ubuntu distributions does not support the `kubernetes.core` collection. We upgraded Ansible to the latest version via the official PPA.
+1.  **Ansible Version Upgrade:** The default Ansible version (2.10.8) on older Ubuntu distributions does not support the `kubernetes.core` collection. I upgraded Ansible to the latest version via the official PPA.
 2.  **Inventory & Python Interpreter Fix:** To prevent the `hosts matched` skip error and the `python3: not found` fatal error during the Gathering Facts stage, the `inventory.ini` file was explicitly configured to run locally and point to the correct system Python path:
     ```ini
     [local]

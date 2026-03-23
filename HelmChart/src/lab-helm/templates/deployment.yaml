@@ -21,4 +21,4 @@ spec:
             - containerPort: {{ .Values.service.port }}
           env:
             - name: ASPNETCORE_HTTP_PORTS
-              value: {{ .Values.service.port | quote }}
+              value: {{ .Values.service.port | quote }}`

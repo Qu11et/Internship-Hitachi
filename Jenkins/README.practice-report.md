@@ -120,13 +120,13 @@ pipeline {
 
 2. Create a Pipeline job in Jenkins:
 - Go to Jenkins dashboard, click "New Item", enter a name for the job, select "Pipeline", and click "OK".
-- In the pipeline configuration, select "Pipeline script from SCM", choose "Git", and enter the repository URL where your Jenkinsfile is located.
+- In the pipeline configuration, select "Pipeline script from SCM", choose "File System", and enter the path to the Jenkinsfile.
 - Save the configuration.
 
 3. Run the pipeline
-- Click "Build Now" to start the pipeline. Jenkins will execute the stages defined in the Jenkinsfile, building the Docker image, pushing it to Docker Hub, and deploying it to Minikube using Ansible.
+- Click "Build Now" to start the pipeline. Jenkins will execute the stages defined in the Jenkinsfile, deploying the application to Minikube using Ansible.
 
-**- We can configure the pipeline to run automatically on code changes by setting up a webhook in GitHub that triggers the Jenkins job whenever there is a new commit. But because we are using local WSL, we will not be able to set up a webhook in this lab. (I will do this in the next lab when we on the AWS)**
+**- We can configure the pipeline to run automatically on code changes by setting up a webhook in GitHub that triggers the Jenkins job whenever there is a new commit. But because we are using local WSL, we will not be able to set up a webhook in this lab. (Maybe, I will do this in the next lab when we on the AWS)**
 
 ## The final result:
 
